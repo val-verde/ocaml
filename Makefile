@@ -581,7 +581,9 @@ endif
 	     "$(INSTALL_COMPLIBDIR)"; \
 	fi
 	cd "$(INSTALL_COMPLIBDIR)" && \
-	   $(RANLIB) ocamlcommon.$(A) ocamlbytecomp.$(A) ocamloptcomp.$(A)
+	   $(RANLIB) ocamlcommon.$(A) && \
+	   $(RANLIB) ocamlbytecomp.$(A) && \
+	   $(RANLIB) ocamloptcomp.$(A)
 
 # Installation of the *.ml sources of compiler-libs
 .PHONY: install-compiler-sources
