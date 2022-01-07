@@ -69,7 +69,7 @@ AC_DEFUN([OCAML_SIGNAL_HANDLERS_SEMANTICS], [
   AC_CHECK_FUNC([sigaction], [has_sigaction=true], [has_sigaction=false])
   AC_CHECK_FUNC([sigprocmask], [has_sigprocmask=true], [has_sigprocmask=false])
   AS_IF([$has_sigaction && $has_sigprocmask],
-    [AC_DEFINE([POSIX_SIGNALS])
+    [AC_DEFINE([POSIX_SIGNALS], [], "")
       AC_MSG_NOTICE([POSIX signal handling found.])],
     [AC_MSG_NOTICE([assuming signals have the System V semantics.])
     ]
@@ -93,7 +93,7 @@ AC_DEFUN([OCAML_CC_SUPPORTS_ALIGNED], [
   AC_MSG_CHECKING([whether the C compiler supports __attribute__((aligned(n)))])
   AC_COMPILE_IFELSE(
     [AC_LANG_SOURCE([typedef struct {__attribute__((aligned(8))) int t;} t;])],
-    [AC_DEFINE([SUPPORTS_ALIGNED_ATTRIBUTE])
+    [AC_DEFINE([SUPPORTS_ALIGNED_ATTRIBUTE], [], "")
     AC_MSG_RESULT([yes])],
     [AC_MSG_RESULT([no])])])
 
@@ -107,7 +107,7 @@ AC_DEFUN([OCAML_CC_SUPPORTS_TREE_VECTORIZE], [
        __attribute__((optimize("tree-vectorize"))) void f(void){}
        int main() { f(); return 0; }
     ])],
-    [AC_DEFINE([SUPPORTS_TREE_VECTORIZE])
+    [AC_DEFINE([SUPPORTS_TREE_VECTORIZE], [], "")
     AC_MSG_RESULT([yes])],
     [AC_MSG_RESULT([no])])
   CFLAGS="$saved_CFLAGS"
@@ -224,7 +224,7 @@ camlPervasives__loop_1128:
 
     AS_IF([$aspp_ok && $as_ok],
       [asm_cfi_supported=true
-      AC_DEFINE([ASM_CFI_SUPPORTED])
+      AC_DEFINE([ASM_CFI_SUPPORTED], [], "")
       AC_MSG_RESULT([yes])],
       [AS_IF([test x"$enable_cfi" = "xyes"],
         [AC_MSG_RESULT([requested but not available
@@ -274,8 +274,8 @@ int main (int argc, char *argv[]){
   return 0;
 }
     ]])],
-    [AC_DEFINE([HAS_HUGE_PAGES])
-    AC_DEFINE_UNQUOTED([HUGE_PAGE_SIZE], [(4 * 1024 * 1024)])
+    [AC_DEFINE([HAS_HUGE_PAGES], [], "")
+    AC_DEFINE_UNQUOTED([HUGE_PAGE_SIZE], [(4 * 1024 * 1024)], "")
     AC_MSG_RESULT([yes])],
     [AC_MSG_RESULT([no])],
     [AC_MSG_RESULT([no assumed])])
@@ -394,7 +394,7 @@ int main (void) {
 }
     ]])],
     [AC_MSG_RESULT([yes])
-    AC_DEFINE([HAS_WORKING_ROUND])],
+    AC_DEFINE([HAS_WORKING_ROUND], [], "")],
     [AC_MSG_RESULT([no])
     AS_CASE([$enable_imprecise_c99_float_ops,$target],
       [no,*], [hard_error=true],
@@ -410,7 +410,7 @@ int main (void) {
     [AS_CASE([$target],
       [x86_64-w64-mingw32],[AC_MSG_RESULT([cross-compiling; assume not])],
       [AC_MSG_RESULT([cross-compiling; assume yes])
-      AC_DEFINE([HAS_WORKING_ROUND])])])
+      AC_DEFINE([HAS_WORKING_ROUND], [], "")])])
 ])
 
 AC_DEFUN([OCAML_C99_CHECK_FMA], [
@@ -446,7 +446,7 @@ int main (void) {
 }
     ]])],
     [AC_MSG_RESULT([yes])
-    AC_DEFINE([HAS_WORKING_FMA])],
+    AC_DEFINE([HAS_WORKING_FMA], [], "")],
     [AC_MSG_RESULT([no])
     AS_CASE([$enable_imprecise_c99_float_ops,$target],
       [no,*], [hard_error=true],
@@ -467,5 +467,5 @@ int main (void) {
       [x86_64-w64-mingw32|x86_64-*-cygwin*],
         [AC_MSG_RESULT([cross-compiling; assume not])],
       [AC_MSG_RESULT([cross-compiling; assume yes])
-      AC_DEFINE([HAS_WORKING_FMA])])])
+      AC_DEFINE([HAS_WORKING_FMA], [], "")])])
 ])

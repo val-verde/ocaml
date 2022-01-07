@@ -570,9 +570,6 @@ AS_IF(
 ## Check for the C compiler: done by libtool
 ## AC_PROG_CC
 
-## Check for C99 support: done by libtool
-## AC_PROG_CC_C99
-
 ## Determine which flags to use for the C compiler
 
 AS_CASE([$ocaml_cv_cc_vendor],
@@ -804,7 +801,7 @@ AS_IF([test -z "$flexdir" -o x"$have_flexdll_h" = 'xno'],
 AS_CASE([$CC,$host],
   [*,*-*-darwin*],
     [mkexe="$mkexe -Wl,-no_compact_unwind";
-    AC_DEFINE([HAS_ARCH_CODE32], [1])],
+    AC_DEFINE([HAS_ARCH_CODE32], [1], "")],
   [*,*-*-haiku*], [mathlib=""],
   [*,*-*-cygwin*],
     [common_cppflags="$common_cppflags -U_WIN32"
@@ -831,11 +828,11 @@ AS_CASE([$CC,$host],
     oc_ldflags='/ENTRY:wmainCRTStartup'
     mkexedebugflag=''],
   [*,x86_64-*-linux*],
-    AC_DEFINE([HAS_ARCH_CODE32], [1]),
+    AC_DEFINE([HAS_ARCH_CODE32], [1], ""),
   [xlc*,powerpc-ibm-aix*],
     [mkexe="$mkexe "
      oc_ldflags="-brtl -bexpfull"
-    AC_DEFINE([HAS_ARCH_CODE32], [1])],
+    AC_DEFINE([HAS_ARCH_CODE32], [1], "")],
   [gcc*,powerpc-*-linux*],
     [oc_ldflags="-mbss-plt"],
 )
@@ -854,12 +851,12 @@ AS_IF([test "x$ac_cv_lib_m_cos" = xyes ], [mathlib="-lm"], [mathlib=""])
 # Checks for header files
 
 AC_CHECK_HEADER([math.h])
-AC_CHECK_HEADERS([unistd.h],[AC_DEFINE([HAS_UNISTD])])
-AC_CHECK_HEADER([stdint.h],[AC_DEFINE([HAS_STDINT_H])])
-AC_CHECK_HEADER([dirent.h], [AC_DEFINE([HAS_DIRENT])], [],
+AC_CHECK_HEADERS([unistd.h],[AC_DEFINE([HAS_UNISTD], [], "")])
+AC_CHECK_HEADER([stdint.h],[AC_DEFINE([HAS_STDINT_H], [], "")])
+AC_CHECK_HEADER([dirent.h], [AC_DEFINE([HAS_DIRENT], [], "")], [],
   [#include <sys/types.h>])
 
-AC_CHECK_HEADER([sys/select.h], [AC_DEFINE([HAS_SYS_SELECT_H])], [],
+AC_CHECK_HEADER([sys/select.h], [AC_DEFINE([HAS_SYS_SELECT_H], [], "")], [],
   [#include <sys/types.h>])
 
 # Checks for types
@@ -882,7 +879,7 @@ AS_IF(
     [bits=32; arch64=false],
   [test "x$ac_cv_sizeof_long_p" = "x8" ],
     [bits=64; arch64=true
-    AC_DEFINE([ARCH_SIXTYFOUR], [1])],
+    AC_DEFINE([ARCH_SIXTYFOUR], [1], "")],
   [AC_MSG_ERROR([Neither 32 nor 64 bits architecture.])]
 )
 
@@ -897,14 +894,14 @@ AS_IF(
   [AC_MSG_ERROR([Sorry, we can't find a 64-bit integer type.])]
 )
 
-AC_DEFINE_UNQUOTED([SIZEOF_PTR], [$ac_cv_sizeof_long_p])
-AC_DEFINE_UNQUOTED([SIZEOF_LONGLONG], [$ac_cv_sizeof_long_long])
+AC_DEFINE_UNQUOTED([SIZEOF_PTR], [$ac_cv_sizeof_long_p], "")
+AC_DEFINE_UNQUOTED([SIZEOF_LONGLONG], [$ac_cv_sizeof_long_long], "")
 
 AC_MSG_NOTICE([Target is a $bits bits architecture])
 
 AC_C_BIGENDIAN(
   [
-    AC_DEFINE([ARCH_BIG_ENDIAN], [1])
+    AC_DEFINE([ARCH_BIG_ENDIAN], [1], "")
     [endianness="be"]
   ],
   [endianness="le"],
@@ -920,13 +917,13 @@ AS_IF([! $arch64],
   [AS_CASE([$target_cpu],
     [i686], [],
     [AS_IF([test "$ac_cv_alignof_double" -gt 4],
-      [AC_DEFINE([ARCH_ALIGN_DOUBLE], [1])])
+      [AC_DEFINE([ARCH_ALIGN_DOUBLE], [1], "")])
      AS_IF([test "x$ac_cv_sizeof_long" = "x8" &&
             test "$ac_cv_alignof_long" -gt 4],
-      [AC_DEFINE([ARCH_ALIGN_INT64], [1])],
+      [AC_DEFINE([ARCH_ALIGN_INT64], [1], "")],
       [AS_IF([test "x$ac_cv_sizeof_long_long" = "x8" &&
               test "$ac_cv_alignof_long_long" -gt 4],
-      [AC_DEFINE([ARCH_ALIGN_INT64], [1])])])
+      [AC_DEFINE([ARCH_ALIGN_INT64], [1], "")])])
     ])])
 
 # Shared library support
@@ -1137,7 +1134,7 @@ AS_IF([! $native_compiler], [natdynlink=false])
 
 AS_IF([$natdynlink], [cmxs="cmxs"], [cmxs="cmx"])
 
-AC_DEFINE_UNQUOTED([OCAML_OS_TYPE], ["$ostype"])
+AC_DEFINE_UNQUOTED([OCAML_OS_TYPE], ["$ostype"], "")
 
 AC_CHECK_TOOL([DIRECT_LD],[ld])
 AS_IF([test -z "$PARTIALLD"],
@@ -1225,7 +1222,7 @@ AS_CASE([$as_target,$ocaml_cv_cc_vendor],
 
 AS_IF([test "$with_pic"],
   [fpic=true
-  AC_DEFINE([CAML_WITH_FPIC])
+  AC_DEFINE([CAML_WITH_FPIC], [], "")
   internal_cflags="$internal_cflags $sharedlib_cflags"
   default_aspp="$default_aspp $sharedlib_cflags"],
   [fpic=false])
@@ -1253,7 +1250,7 @@ AC_CHECK_FUNCS(m4_normalize([expm1 log1p hypot fma exp2 log2 cbrt acosh asinh
   atanh erf erfc trunc round copysign]), [], [has_c99_float_ops=false])
 
 AS_IF([$has_c99_float_ops],
-  [AC_DEFINE([HAS_C99_FLOAT_OPS])
+  [AC_DEFINE([HAS_C99_FLOAT_OPS], [], "")
   # Check whether round works (known bug in mingw-w64)
   OCAML_C99_CHECK_ROUND
   # Check whether fma works (regressed in mingw-w64 8.0.0; present, but broken,
@@ -1275,10 +1272,10 @@ AS_IF([$has_c99_float_ops],
          (ancient Visual Studio)]))])])])
 
 ## getrusage
-AC_CHECK_FUNC([getrusage], [AC_DEFINE([HAS_GETRUSAGE])])
+AC_CHECK_FUNC([getrusage], [AC_DEFINE([HAS_GETRUSAGE], [], "")])
 
 ## times
-AC_CHECK_FUNC([times], [AC_DEFINE([HAS_TIMES])])
+AC_CHECK_FUNC([times], [AC_DEFINE([HAS_TIMES], [], "")])
 
 ## secure_getenv and __secure_getenv
 
@@ -1286,14 +1283,14 @@ saved_CPPFLAGS="$CPPFLAGS"
 CPPFLAGS="-D_GNU_SOURCE $CPPFLAGS"
 
 AC_CHECK_FUNC([secure_getenv],
-  [AC_DEFINE([HAS_SECURE_GETENV])],
-  [AC_CHECK_FUNC([__secure_getenv], [AC_DEFINE([HAS___SECURE_GETENV])])])
+  [AC_DEFINE([HAS_SECURE_GETENV], [], "")],
+  [AC_CHECK_FUNC([__secure_getenv], [AC_DEFINE([HAS___SECURE_GETENV], [], "")])])
 
 CPPFLAGS="$saved_CPPFLAGS"
 
 ## issetugid
 
-AC_CHECK_FUNC([issetugid], [AC_DEFINE([HAS_ISSETUGID])])
+AC_CHECK_FUNC([issetugid], [AC_DEFINE([HAS_ISSETUGID], [], "")])
 
 ## Checking for monotonic clock source
 ## On Windows MSVC, QueryPerformanceCounter and QueryPerformanceFrequency
@@ -1309,7 +1306,7 @@ AS_CASE([$host],
     AC_CHECK_FUNCS([mach_timebase_info mach_absolute_time],
       [
         has_monotonic_clock=true
-        AC_DEFINE([HAS_MACH_ABSOLUTE_TIME])
+        AC_DEFINE([HAS_MACH_ABSOLUTE_TIME], [], "")
       ],
       [has_monotonic_clock=false])],
   [AC_COMPILE_IFELSE([AC_LANG_SOURCE([[
@@ -1326,7 +1323,7 @@ AS_CASE([$host],
     ]])],
     [
       has_monotonic_clock=true
-      AC_DEFINE([HAS_POSIX_MONOTONIC_CLOCK])
+      AC_DEFINE([HAS_POSIX_MONOTONIC_CLOCK], 1, "")
     ],
     [has_monotonic_clock=false])
   ]
@@ -1408,18 +1405,18 @@ AS_CASE([$host],
   ]
 )
 
-AS_IF([$sockets], [AC_DEFINE([HAS_SOCKETS])])
+AS_IF([$sockets], [AC_DEFINE([HAS_SOCKETS], [], "")])
 
 ## socklen_t
 
 AS_CASE([$host],
   [*-*-mingw32|*-pc-windows],
-    [AC_CHECK_TYPE([socklen_t], [AC_DEFINE([HAS_SOCKLEN_T])], [],
+    [AC_CHECK_TYPE([socklen_t], [AC_DEFINE([HAS_SOCKLEN_T], [], "")], [],
       [#include <ws2tcpip.h>])],
-  [AC_CHECK_TYPE([socklen_t], [AC_DEFINE([HAS_SOCKLEN_T])], [],
+  [AC_CHECK_TYPE([socklen_t], [AC_DEFINE([HAS_SOCKLEN_T], [], "")], [],
     [#include <sys/socket.h>])])
 
-AC_CHECK_FUNC([inet_aton], [AC_DEFINE([HAS_INET_ATON])])
+AC_CHECK_FUNC([inet_aton], [AC_DEFINE([HAS_INET_ATON], [], "")])
 
 ## IPv6 support
 
@@ -1449,59 +1446,59 @@ AS_IF([$ipv6],
   [AC_CHECK_FUNC([inet_pton], [], [ipv6=false])])
 
 AS_IF([$ipv6],
-  [AC_CHECK_FUNC([inet_ntop], [AC_DEFINE([HAS_IPV6])])])
+  [AC_CHECK_FUNC([inet_ntop], [AC_DEFINE([HAS_IPV6], [], "")])])
 
-AC_CHECK_FUNC([rewinddir], [AC_DEFINE([HAS_REWINDDIR])])
+AC_CHECK_FUNC([rewinddir], [AC_DEFINE([HAS_REWINDDIR], [], "")])
 
-AC_CHECK_FUNC([lockf], [AC_DEFINE([HAS_LOCKF])])
+AC_CHECK_FUNC([lockf], [AC_DEFINE([HAS_LOCKF], [], "")])
 
-AC_CHECK_FUNC([mkfifo], [AC_DEFINE([HAS_MKFIFO])])
+AC_CHECK_FUNC([mkfifo], [AC_DEFINE([HAS_MKFIFO], [], "")])
 
-AC_CHECK_FUNC([getcwd], [AC_DEFINE([HAS_GETCWD])])
+AC_CHECK_FUNC([getcwd], [AC_DEFINE([HAS_GETCWD], [], "")])
 
-AC_CHECK_DECL([system], [AC_DEFINE([HAS_SYSTEM])], [], [[#include <stdlib.h>]])
+AC_CHECK_DECL([system], [AC_DEFINE([HAS_SYSTEM], [], "")], [], [[#include <stdlib.h>]])
 
 ## utime
 ## Note: this was defined in config/s-nt.h but the autoconf macros do not
 # seem to detect it properly on Windows so we hardcode the definition
 # of HAS_UTIME on Windows but this will probably need to be clarified
 AS_CASE([$host],
-  [*-*-mingw32|*-pc-windows], [AC_DEFINE([HAS_UTIME])],
+  [*-*-mingw32|*-pc-windows], [AC_DEFINE([HAS_UTIME], [], "")],
   [AC_CHECK_HEADER([sys/types.h],
     [AC_CHECK_HEADER([utime.h],
-      [AC_CHECK_FUNC([utime], [AC_DEFINE([HAS_UTIME])])])])])
+      [AC_CHECK_FUNC([utime], [AC_DEFINE([HAS_UTIME], [], "")])])])])
 
-AC_CHECK_FUNC([utimes], [AC_DEFINE([HAS_UTIMES])])
+AC_CHECK_FUNC([utimes], [AC_DEFINE([HAS_UTIMES], [], "")])
 
 AC_CHECK_FUNC([fchmod],
-  [AC_CHECK_FUNC([fchown], [AC_DEFINE([HAS_FCHMOD])])])
+  [AC_CHECK_FUNC([fchown], [AC_DEFINE([HAS_FCHMOD], [], "")])])
 
 AC_CHECK_FUNC([truncate],
-  [AC_CHECK_FUNC([ftruncate], [AC_DEFINE([HAS_TRUNCATE])])])
+  [AC_CHECK_FUNC([ftruncate], [AC_DEFINE([HAS_TRUNCATE], [], "")])])
 
 ## select
 AC_CHECK_FUNC([select],
   [AC_CHECK_TYPE([fd_set],
-    [AC_DEFINE([HAS_SELECT])
+    [AC_DEFINE([HAS_SELECT], [], "")
     select=true], [select=false], [
 #include <sys/types.h>
 #include <sys/select.h>
   ])])
 
-AC_CHECK_FUNC([nanosleep], [AC_DEFINE([HAS_NANOSLEEP])])
+AC_CHECK_FUNC([nanosleep], [AC_DEFINE([HAS_NANOSLEEP], [], "")])
 
 AC_CHECK_FUNC([symlink],
   [AC_CHECK_FUNC([readlink],
-    [AC_CHECK_FUNC([lstat], [AC_DEFINE([HAS_SYMLINK])])])])
+    [AC_CHECK_FUNC([lstat], [AC_DEFINE([HAS_SYMLINK], [], "")])])])
 
-AC_CHECK_FUNC([realpath], [AC_DEFINE([HAS_REALPATH])])
+AC_CHECK_FUNC([realpath], [AC_DEFINE([HAS_REALPATH], [], "")])
 
 # wait
 AC_CHECK_FUNC(
   [waitpid],
   [
     wait=true
-    AC_DEFINE([HAS_WAITPID])
+    AC_DEFINE([HAS_WAITPID], [], "")
   ],
   [wait=false])
 
@@ -1509,17 +1506,17 @@ AC_CHECK_FUNC(
   [wait4],
   [
     has_wait=true
-    AC_DEFINE([HAS_WAIT4])
+    AC_DEFINE([HAS_WAIT4], [], "")
   ])
 
 ## getgroups
-AC_CHECK_FUNC([getgroups], [AC_DEFINE([HAS_GETGROUPS])])
+AC_CHECK_FUNC([getgroups], [AC_DEFINE([HAS_GETGROUPS], [], "")])
 
 ## setgroups
-AC_CHECK_FUNC([setgroups], [AC_DEFINE([HAS_SETGROUPS])])
+AC_CHECK_FUNC([setgroups], [AC_DEFINE([HAS_SETGROUPS], [], "")])
 
 ## initgroups
-AC_CHECK_FUNC([initgroups], [AC_DEFINE([HAS_INITGROUPS])])
+AC_CHECK_FUNC([initgroups], [AC_DEFINE([HAS_INITGROUPS], [], "")])
 
 ## termios
 
@@ -1528,14 +1525,14 @@ AC_CHECK_HEADER([termios.h],
     [AC_CHECK_FUNC([tcsetattr],
       [AC_CHECK_FUNC([tcsendbreak],
         [AC_CHECK_FUNC([tcflush],
-          [AC_CHECK_FUNC([tcflow], [AC_DEFINE([HAS_TERMIOS])])])])])])])
+          [AC_CHECK_FUNC([tcflow], [AC_DEFINE([HAS_TERMIOS], [], "")])])])])])])
 
 ## setitimer
 
 AC_CHECK_FUNC([setitimer],
   [
     setitimer=true
-    AC_DEFINE([HAS_SETITIMER])
+    AC_DEFINE([HAS_SETITIMER], [], "")
   ],
   [setitimer=false])
 
@@ -1543,63 +1540,63 @@ AC_CHECK_FUNC([setitimer],
 # Note: detection fails on Windows so hardcoding the result
 # (should be debugged later)
 AS_CASE([$host],
-  [*-*-mingw32|*-pc-windows], [AC_DEFINE([HAS_GETHOSTNAME])],
-  [AC_CHECK_FUNC([gethostname], [AC_DEFINE([HAS_GETHOSTNAME])])])
+  [*-*-mingw32|*-pc-windows], [AC_DEFINE([HAS_GETHOSTNAME], [], "")],
+  [AC_CHECK_FUNC([gethostname], [AC_DEFINE([HAS_GETHOSTNAME], [], "")])])
 
 ## uname
 
 AC_CHECK_HEADER([sys/utsname.h],
-  [AC_CHECK_FUNC([uname], [AC_DEFINE([HAS_UNAME])])])
+  [AC_CHECK_FUNC([uname], [AC_DEFINE([HAS_UNAME], [], "")])])
 
 ## gettimeofday
 
 AC_CHECK_FUNC([gettimeofday],
   [
     gettimeofday=true
-    AC_DEFINE([HAS_GETTIMEOFDAY])
+    AC_DEFINE([HAS_GETTIMEOFDAY], [], "")
   ],
   [gettimeofday=false])
 
 ## mktime
 
-AC_CHECK_FUNC([mktime], [AC_DEFINE([HAS_MKTIME])])
+AC_CHECK_FUNC([mktime], [AC_DEFINE([HAS_MKTIME], [], "")])
 
 ## setsid
 
 AS_CASE([$host],
   [*-cygwin|*-*-mingw32|*-pc-windows], [],
-  [AC_CHECK_FUNC([setsid], [AC_DEFINE([HAS_SETSID])])])
+  [AC_CHECK_FUNC([setsid], [AC_DEFINE([HAS_SETSID], [], "")])])
 
 ## putenv
 
-AC_CHECK_FUNC([putenv], [AC_DEFINE([HAS_PUTENV])])
+AC_CHECK_FUNC([putenv], [AC_DEFINE([HAS_PUTENV], [], "")])
 
 ## setenv and unsetenv
 
 AC_CHECK_FUNC([setenv],
-  [AC_CHECK_FUNC([unsetenv], [AC_DEFINE([HAS_SETENV_UNSETENV])])])
+  [AC_CHECK_FUNC([unsetenv], [AC_DEFINE([HAS_SETENV_UNSETENV], [], "")])])
 
 ## newlocale() and <locale.h>
 # Note: the detection fails on msvc so we hardcode the result
 # (should be debugged later)
 AS_CASE([$host],
-  [*-pc-windows], [AC_DEFINE([HAS_LOCALE_H])],
+  [*-pc-windows], [AC_DEFINE([HAS_LOCALE_H], [], "")],
   [AC_CHECK_HEADER([locale.h],
     [AC_CHECK_FUNC([newlocale],
       [AC_CHECK_FUNC([freelocale],
-        [AC_CHECK_FUNC([uselocale], [AC_DEFINE([HAS_LOCALE_H])])])])])])
+        [AC_CHECK_FUNC([uselocale], [AC_DEFINE([HAS_LOCALE_H], [], "")])])])])])
 
 AC_CHECK_HEADER([xlocale.h],
   [AC_CHECK_FUNC([newlocale],
     [AC_CHECK_FUNC([freelocale],
-      [AC_CHECK_FUNC([uselocale], [AC_DEFINE([HAS_XLOCALE_H])])])])])
+      [AC_CHECK_FUNC([uselocale], [AC_DEFINE([HAS_XLOCALE_H], [], "")])])])])
 
 ## strtod_l
 # Note: not detected on MSVC so hardcoding the result
 # (should be debugged later)
 AS_CASE([$host],
-  [*-pc-windows], [AC_DEFINE([HAS_STRTOD_L])],
-  [AC_CHECK_FUNC([strtod_l], [AC_DEFINE([HAS_STRTOD_L])])])
+  [*-pc-windows], [AC_DEFINE([HAS_STRTOD_L], [], "")],
+  [AC_CHECK_FUNC([strtod_l], [AC_DEFINE([HAS_STRTOD_L], [], "")])])
 
 ## shared library support
 AS_IF([$shared_libraries_supported],
@@ -1615,18 +1612,18 @@ AS_IF([$shared_libraries_supported],
 
 AS_IF([$supports_shared_libraries],
   [AC_MSG_NOTICE([Dynamic loading of shared libraries is supported.])
-  AC_DEFINE([SUPPORT_DYNAMIC_LINKING])],
+  AC_DEFINE([SUPPORT_DYNAMIC_LINKING] [], "")],
   [AC_MSG_NOTICE([Dynamic loading of shared libraries is not supported.])])
 
 ## mmap
 
 AC_CHECK_HEADER([sys/mman.h],
   [AC_CHECK_FUNC([mmap],
-    [AC_CHECK_FUNC([munmap], [AC_DEFINE([HAS_MMAP])])])])
+    [AC_CHECK_FUNC([munmap], [AC_DEFINE([HAS_MMAP], [], "")])])])
 
 ## pwrite
 
-AC_CHECK_FUNC([pwrite], [AC_DEFINE([HAS_PWRITE])])
+AC_CHECK_FUNC([pwrite], [AC_DEFINE([HAS_PWRITE], [], "")])
 
 ## -fdebug-prefix-map support by the C compiler
 AS_CASE([$ocaml_cv_cc_vendor,$host],
@@ -1640,7 +1637,7 @@ AS_CASE([$ocaml_cv_cc_vendor,$host],
 
 AC_CHECK_MEMBER([struct stat.st_atim.tv_nsec],
   [stat_has_ns_precision=true
-  AC_DEFINE([HAS_NANOSECOND_STAT], [1])],
+  AC_DEFINE([HAS_NANOSECOND_STAT], [1], "")],
   [],
   [
     AC_INCLUDES_DEFAULT
@@ -1651,7 +1648,7 @@ AC_CHECK_MEMBER([struct stat.st_atim.tv_nsec],
 AS_IF([! $stat_has_ns_precision],
   [AC_CHECK_MEMBER([struct stat.st_atimespec.tv_nsec],
     [stat_has_ns_precision=true
-    AC_DEFINE([HAS_NANOSECOND_STAT], [2])],
+    AC_DEFINE([HAS_NANOSECOND_STAT], [2], "")],
     [],
     [
       AC_INCLUDES_DEFAULT
@@ -1661,7 +1658,7 @@ AS_IF([! $stat_has_ns_precision],
 AS_IF([! $stat_has_ns_precision],
   [AC_CHECK_MEMBER([struct stat.st_atimensec],
     [stat_has_ns_precision=true
-    AC_DEFINE([HAS_NANOSECOND_STAT], [3])],
+    AC_DEFINE([HAS_NANOSECOND_STAT], [3], "")],
     [],
     [
       AC_INCLUDES_DEFAULT
@@ -1677,8 +1674,8 @@ AS_IF([$stat_has_ns_precision],
 AX_FUNC_WHICH_GETHOSTBYNAME_R
 
 AS_CASE([$ac_cv_func_which_gethostbyname_r],
-  [six], [AC_DEFINE([HAS_GETHOSTBYNAME_R],[6])],
-  [five], [AC_DEFINE([HAS_GETHOSTBYNAME_R],[5])],
+  [six], [AC_DEFINE([HAS_GETHOSTBYNAME_R],[6], "")],
+  [five], [AC_DEFINE([HAS_GETHOSTBYNAME_R],[5], "")],
   [three], [AC_MSG_WARN([OCaml does not support this variant])])
 
 # Number of arguments of gethostbyaddr_r
@@ -1686,54 +1683,54 @@ AS_CASE([$ac_cv_func_which_gethostbyname_r],
 AX_FUNC_WHICH_GETHOSTBYADDR_R
 
 AS_CASE([$ac_cv_func_which_gethostbyaddr_r],
-  [eight], [AC_DEFINE([HAS_GETHOSTBYADDR_R],[8])],
-  [seven], [AC_DEFINE([HAS_GETHOSTBYADDR_R],[7])])
+  [eight], [AC_DEFINE([HAS_GETHOSTBYADDR_R],[8], "")],
+  [seven], [AC_DEFINE([HAS_GETHOSTBYADDR_R],[7], "")])
 
 ## mkstemp
 
-AC_CHECK_FUNC([mkstemp], [AC_DEFINE([HAS_MKSTEMP])])
+AC_CHECK_FUNC([mkstemp], [AC_DEFINE([HAS_MKSTEMP], [], "")])
 
 ## nice
 
-AC_CHECK_FUNC([nice], [AC_DEFINE([HAS_NICE])])
+AC_CHECK_FUNC([nice], [AC_DEFINE([HAS_NICE], [], "")])
 
 ## dup3
 
-AC_CHECK_FUNC([dup3], [AC_DEFINE([HAS_DUP3])])
+AC_CHECK_FUNC([dup3], [AC_DEFINE([HAS_DUP3], [], "")])
 
 ## pipe2
 
-AC_CHECK_FUNC([pipe2], [AC_DEFINE([HAS_PIPE2])])
+AC_CHECK_FUNC([pipe2], [AC_DEFINE([HAS_PIPE2], [], "")])
 
 ## accept4
 
-AC_CHECK_FUNC([accept4], [AC_DEFINE([HAS_ACCEPT4])])
+AC_CHECK_FUNC([accept4], [AC_DEFINE([HAS_ACCEPT4], [], "")])
 
 ## getauxval
 
-AC_CHECK_FUNC([getauxval], [AC_DEFINE([HAS_GETAUXVAL])])
+AC_CHECK_FUNC([getauxval], [AC_DEFINE([HAS_GETAUXVAL], [], "")])
 
 ## shmat
 AC_CHECK_HEADER([sys/shm.h],
   [
-    AC_DEFINE([HAS_SYS_SHM_H])
-    AC_CHECK_FUNC([shmat], [AC_DEFINE([HAS_SHMAT])])
+    AC_DEFINE([HAS_SYS_SHM_H], [], "")
+    AC_CHECK_FUNC([shmat], [AC_DEFINE([HAS_SHMAT], [], "")])
   ])
 
 ## execvpe
 
-AC_CHECK_FUNC([execvpe], [AC_DEFINE([HAS_EXECVPE])])
+AC_CHECK_FUNC([execvpe], [AC_DEFINE([HAS_EXECVPE], [], "")])
 
 ## posix_spawn
 
 AC_CHECK_HEADER([spawn.h],
   [AC_CHECK_FUNC([posix_spawn],
-    [AC_CHECK_FUNC([posix_spawnp], [AC_DEFINE([HAS_POSIX_SPAWN])])])])
+    [AC_CHECK_FUNC([posix_spawnp], [AC_DEFINE([HAS_POSIX_SPAWN], [], "")])])])
 
 ## ffs or _BitScanForward
 
-AC_CHECK_FUNC([ffs], [AC_DEFINE([HAS_FFS])])
-AC_CHECK_FUNC([_BitScanForward], [AC_DEFINE([HAS_BITSCANFORWARD])])
+AC_CHECK_FUNC([ffs], [AC_DEFINE([HAS_FFS], [], "")])
+AC_CHECK_FUNC([_BitScanForward], [AC_DEFINE([HAS_BITSCANFORWARD], [], "")])
 
 ## Determine whether the debugger should/can be built
 
@@ -1760,7 +1757,7 @@ AC_MSG_CHECKING([whether stack overflows can be detected])
 AS_CASE([$arch,$system],
   [i386,linux_elf|amd64,linux|amd64,macosx \
     |amd64,openbsd|i386,bsd_elf|arm64,linux|arm64,macosx],
-    [AC_DEFINE([HAS_STACK_OVERFLOW_DETECTION])
+    [AC_DEFINE([HAS_STACK_OVERFLOW_DETECTION], [], "")
     AC_MSG_RESULT([yes])],
   [AC_MSG_RESULT([no])])
 
@@ -1783,7 +1780,7 @@ AS_IF([test x"$enable_systhreads" = "xno"],
       saved_LIBS="$LIBS"
       CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
       LIBS="$LIBS $PTHREAD_LIBS"
-      AC_CHECK_FUNC([sigwait], [AC_DEFINE([HAS_SIGWAIT])])
+      AC_CHECK_FUNC([sigwait], [AC_DEFINE([HAS_SIGWAIT], [], "")])
       LIBS="$saved_LIBS"
       CFLAGS="$saved_CFLAGS"],
       [AS_IF([test x"$enable_systhreads" = "xyes"],
@@ -1807,7 +1804,7 @@ AS_IF([test x"$enable_frame_pointers" = "xyes"],
     [x86_64-*-linux*,gcc*|x86_64-*-linux*,clang*],
       [common_cflags="$common_cflags -g  -fno-omit-frame-pointer"
       frame_pointers=true
-      AC_DEFINE([WITH_FRAME_POINTERS])
+      AC_DEFINE([WITH_FRAME_POINTERS], [], "")
       AC_MSG_NOTICE([using frame pointers])],
     [AC_MSG_ERROR([frame pointers not supported on this platform])]
   )],
@@ -1818,7 +1815,7 @@ AS_IF([test x"$enable_frame_pointers" = "xyes"],
 
 AS_IF([test x"$enable_naked_pointers" = "xno" ],
   [naked_pointers=false
-   AC_DEFINE([NO_NAKED_POINTERS])],
+   AC_DEFINE([NO_NAKED_POINTERS], [], "")],
   [naked_pointers=true])
 
 AS_IF([test x"$enable_naked_pointers_checker" = "xyes" ],
@@ -1832,7 +1829,7 @@ AS_IF([test x"$enable_naked_pointers_checker" = "xyes" ],
     |amd64,freebsd|amd64,solaris \
     |arm64,linux|arm64,macosx],
       [naked_pointers_checker=true
-      AC_DEFINE([NAKED_POINTERS_CHECKER])],
+      AC_DEFINE([NAKED_POINTERS_CHECKER], [], "")],
     [*],
       [AC_MSG_ERROR([naked pointers checker not supported on this platform])]
   )],
@@ -1841,8 +1838,8 @@ AS_IF([test x"$enable_naked_pointers_checker" = "xyes" ],
 ## Check for mmap support for huge pages and contiguous heap
 OCAML_MMAP_SUPPORTS_HUGE_PAGES
 
-AC_DEFINE_UNQUOTED([PROFINFO_WIDTH], [$profinfo_width])
-AS_IF([$profinfo], [AC_DEFINE([WITH_PROFINFO])])
+AC_DEFINE_UNQUOTED([PROFINFO_WIDTH], [$profinfo_width], "")
+AS_IF([$profinfo], [AC_DEFINE([WITH_PROFINFO, [], ""])])
 
 AS_IF([test x"$enable_installing_bytecode_programs" = "xno"],
   [install_bytecode_programs=false],
@@ -1888,7 +1885,7 @@ AS_IF([test x"$enable_cmm_invariants" = "xyes"],
 
 AS_IF([test x"$enable_flat_float_array" = "xno"],
   [flat_float_array=false],
-  [AC_DEFINE([FLAT_FLOAT_ARRAY])
+  [AC_DEFINE([FLAT_FLOAT_ARRAY], [], "")
   flat_float_array=true])
 
 AS_IF([test x"$enable_function_sections" = "xno"],
@@ -1912,7 +1909,7 @@ AS_IF([test x"$enable_function_sections" = "xno"],
             [gcc-*|clang-*],
               [function_sections=true;
               internal_cflags="$internal_cflags -ffunction-sections";
-              AC_DEFINE([FUNCTION_SECTIONS])],
+              AC_DEFINE([FUNCTION_SECTIONS], [], "")],
             [*],
               [function_sections=false;
               AC_MSG_NOTICE([Function sections are not supported by
@@ -1930,7 +1927,7 @@ AS_IF([test x"$with_afl" = "xyes"],
 
 AS_IF([test x"$enable_force_safe_string" = "xno"],
   [force_safe_string=false],
-  [AC_DEFINE([CAML_SAFE_STRING])
+  [AC_DEFINE([CAML_SAFE_STRING], [], "")
    force_safe_string=true])
 
 AS_IF([test x"$DEFAULT_STRING" = "xunsafe"],
@@ -1986,18 +1983,18 @@ AS_IF([test x"$prefix" = "xNONE"],
 # (all this should be understood and fixed)
 AS_CASE([$host],
   [*-*-mingw32],
-    [AC_DEFINE([HAS_BROKEN_PRINTF])
-    AC_DEFINE([HAS_STRERROR])
-    AC_DEFINE([HAS_NICE])],
+    [AC_DEFINE([HAS_BROKEN_PRINTF], [], "")
+    AC_DEFINE([HAS_STRERROR], [], "")
+    AC_DEFINE([HAS_NICE]), [], ""],
   [*-pc-windows],
-    [AC_DEFINE([HAS_BROKEN_PRINTF])
-    AC_DEFINE([HAS_STRERROR])
-    AC_DEFINE([HAS_IPV6])
-    AC_DEFINE([HAS_NICE])],
+    [AC_DEFINE([HAS_BROKEN_PRINTF], [], "")
+    AC_DEFINE([HAS_STRERROR], [], "")
+    AC_DEFINE([HAS_IPV6], [], "")
+    AC_DEFINE([HAS_NICE], [], "")],
   [*-*-solaris*],
     # This is required as otherwise floats are printed
     # as "Infinity" and "Inf" instead of the expected "inf"
-    [AC_DEFINE([HAS_BROKEN_PRINTF])])
+    [AC_DEFINE([HAS_BROKEN_PRINTF], [], "")])
 
 AS_IF([test x"$enable_stdlib_manpages" != "xno"],
   [stdlib_manpages=true],[stdlib_manpages=false])
